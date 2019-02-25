@@ -66,13 +66,13 @@ function ShowItemsforSale () {
                         }
                     ],function(err, results) {
                         if (err) throw err;
-                        console.log("Your order has been placed. You have been charged $" + Totalcost);
+                        console.log("Your order has been placed. You should expect a charge of $" + Totalcost);
                         connection.end();
                     })
                 } 
                 //if bamazon does not have enough inventory then deny request
                 else {
-                    console.log("Sorry for the inconvience but you are asking to much from bamazon. You can try again later or continue to shop for different items. WE APPRECIATE YOUR BUSINESS");
+                    console.log("Sorry for the inconvience but you are asking to much from bamazon. You can try again later or continue to shop for different amounts/items. WE APPRECIATE YOUR BUSINESS");
                     ShowItemsforSale();
                 }
             })
