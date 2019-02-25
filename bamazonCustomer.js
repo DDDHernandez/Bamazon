@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "Bigd903453!",
+    password: process.env.MYSQL_Password,
     database: "bamazon"
 });
 //Connect to MYSQL and log our threadID
@@ -24,9 +24,10 @@ function ShowItemsforSale () {
         "SELECT * FROM products", function(err, results) {
             if (err) throw err;
             for (i = 0; i < results.length; i++) {
-                console.log("----------------------------------\n");
+                console.log("----------------------------------------\n");
                 console.log("Item Id: " + results[i].id + "\nProduct: " + results[i].product_name + 
-                "\nDepartment: " + results[i].department_name + "\nPrice: $" + results[i].price + "\nQuantity: " + results[i].stock_quantity +"\n");
+                "\nDepartment: " + results[i].department_name + "\nPrice: $" + results[i].price + "\nQuantity: " +
+                 results[i].stock_quantity +"\n");
             }
         
             inquirer.prompt([
@@ -53,8 +54,8 @@ function ShowItemsforSale () {
                 var bamazonStock = results[0].stock_quantity;
                 var Quantity = bamazonStock - answers.Quantity;
                 var ItemsPrice = results[0].price;
-                var Totalcost = ItemsPrice * answers.Quantity;
-            //If bamazon has enough inventory in stock then sell item(s).
+                var FinalPrice = ItemsPrice * answers.Quantity;
+            //If bamazon has enough inventory in stock to sell item(s) without going below 0 then sell.
                 if(Quantity >= 0) {
                     connection.query("UPDATE products SET ? WHERE ?",
                     [
@@ -66,13 +67,13 @@ function ShowItemsforSale () {
                         }
                     ],function(err, results) {
                         if (err) throw err;
-                        console.log("Your order has been placed. You should expect a charge of $" + Totalcost);
+                        console.log("Your order has been placed. You should expect a charge of $" + FinalPrice);
                         connection.end();
                     })
                 } 
-                //if bamazon does not have enough inventory then deny request
+                //If bamazon does not have enough inventory then deny request
                 else {
-                    console.log("Sorry for the inconvience but you are asking to much from bamazon. You can try again later or continue to shop for different amounts/items. WE APPRECIATE YOUR BUSINESS");
+                    console.log("Sorry for the inconvience but you are asking to much from bamazon. You can try again later or continue to shop for different amount(s)/item(s). WE APPRECIATE YOUR BUSINESS");
                     ShowItemsforSale();
                 }
             })
